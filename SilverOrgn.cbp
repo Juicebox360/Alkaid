@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="SilverOrgn" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option output="bin\Debug\SilverOrgn" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj\Debug\" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-g" />
+				</Compiler>
+			</Target>
+			<Target title="Release">
+				<Option output="bin\Release\SilverOrgn" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj\Release\" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-fexpensive-optimizations" />
+					<Add option="-Os" />
+					<Add option="-O3" />
+					<Add option="-static-libgcc -static-libstdc++" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall" />
+			<Add directory="C:\MinGW\include" />
+			<Add directory="include" />
+		</Compiler>
+		<Linker>
+			<Add library="mingw32" />
+			<Add library="SDLmain" />
+			<Add library="SDL.dll" />
+			<Add library="user32" />
+			<Add library="gdi32" />
+			<Add library="winmm" />
+			<Add library="dxguid" />
+			<Add library="C:\MinGW\lib\libopengl32.a" />
+			<Add directory="C:\MinGW\lib" />
+			<Add directory="C:\MinGW\bin" />
+		</Linker>
+		<Unit filename="CSStrip.png" />
+		<Unit filename="fonts\04_BITMAP.TTF" />
+		<Unit filename="fonts\sauce8bit.ttf" />
+		<Unit filename="include\InfoSheet.h" />
+		<Unit filename="include\gfx\AnimatedSprite.h" />
+		<Unit filename="include\gfx\Sprite.h" />
+		<Unit filename="include\test.h" />
+		<Unit filename="include\util\Colour.h" />
+		<Unit filename="include\util\Constants.h" />
+		<Unit filename="include\util\MathUtils.h" />
+		<Unit filename="include\util\Vector2f.h" />
+		<Unit filename="sheets.png" />
+		<Unit filename="sound\lawy.ogg" />
+		<Unit filename="src\InfoSheet.cpp" />
+		<Unit filename="src\gfx\AnimatedSprite.cpp" />
+		<Unit filename="src\gfx\Sprite.cpp" />
+		<Unit filename="src\main.cpp" />
+		<Unit filename="src\test.cpp" />
+		<Unit filename="src\util\Colour.cpp" />
+		<Unit filename="src\util\Constants.cpp" />
+		<Unit filename="src\util\MathUtils.cpp" />
+		<Unit filename="src\util\Vector2f.cpp" />
+		<Extensions>
+			<code_completion />
+			<debugger />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>
