@@ -37,6 +37,8 @@
 			<Add directory="include" />
 		</Compiler>
 		<Linker>
+			<Add option="-lSDLmain -lSDL -lSDL_image -lSDL_ttf -lSDL_mixer" />
+			<Add option="-lopengl32" />
 			<Add library="mingw32" />
 			<Add library="SDLmain" />
 			<Add library="SDL.dll" />

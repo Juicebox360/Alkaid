@@ -56,6 +56,7 @@ TTF_Font *font;
 double theta = 0, scaleX = 1.0d, scaleY = 1.0d, centreX = 0, centreY = 0;
 
 float timeLastMs, timeCurrentMs, timeDeltaMs, timeAccumulatedMs;
+std::vector<float> timeFrames;
 
 bool gameRunning = true;
 
@@ -335,6 +336,15 @@ std::string concat( const char * prefix, double value, const char * postfix )
 
     return sstr.str();
 }
+// Mine ~wareya
+std::string concat( const char * prefix, double value, const char * postfix , double supvalue )
+{
+    sstr.str( "" );
+
+    sstr << prefix << value << postfix << supvalue;
+
+    return sstr.str();
+}
 
 // The parameter list is temporary; the actual version will be handled by a SpriteManager or the like.
 void render( SDL_Surface *screen, Sprite &sprite, AnimatedSprite &anim, AnimatedSprite &paper )
@@ -370,6 +380,11 @@ void render( SDL_Surface *screen, Sprite &sprite, AnimatedSprite &anim, Animated
 
     temp = concat( "T / G: Sprite index (index = ", index, ")" );
     drawTextShaded( font, temp, 10, 130, fColour, bColour );
+
+    temp = concat( "fps (smooth/realtickratio): ",
+                  1000/(timeFrames.back()-timeFrames.front())*timeFrames.size(), "/",
+                  1/(timeFrames.back()-timeFrames[timeFrames.size() - 2])*timeFrames.size()*UPDATE_RATE );
+    drawTextShaded( font, temp, 10, 150, fColour, bColour );
 
     glDisable( GL_TEXTURE_2D );
     glColor4ub( 255, 0, 0, 100 );
@@ -451,10 +466,16 @@ int main( int argc, char **argv )
         timeDeltaMs = timeCurrentMs - timeLastMs;
         timeAccumulatedMs += timeDeltaMs;
 
+        //this is a while just in case the FPS goes below the update rate
         while ( timeAccumulatedMs >= UPDATE_RATE )
         {
+            timeFrames.push_back(timeCurrentMs);
+            while( timeFrames[0]+1000 < timeLastMs )
+                timeFrames.erase( timeFrames.begin() );
+
             // Update. Physics. Inputs. AI.
             processInput( sprite );
+
             anim.update( screen, timeAccumulatedMs );
             paper.update( screen, timeAccumulatedMs );
 
@@ -480,10 +501,13 @@ int main( int argc, char **argv )
             }
 
             timeAccumulatedMs -= UPDATE_RATE;
-        }
 
-        render( screen, sprite, anim, paper );
+            // Render everything if the updating for this tick is done
+            if( timeAccumulatedMs < UPDATE_RATE )
+                render( screen, sprite, anim, paper );
+        }
     }
+
     printf( "Exiting game loop\n" );
 
     cleanUp();

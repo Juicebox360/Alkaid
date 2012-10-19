@@ -36,7 +36,7 @@ void InfoSheet::update( SDL_Surface *screen, int delta )
             visible = false;
         }
 
-        printf( "Sheet data:\nx: %f\ny: %f\nxVel: %f\nyVel: %f\nindex: %i\n", position.getX(), position.getY(), velocity.getX(), velocity.getY(), sheetIndex );
+        //printf( "Sheet data:\nx: %f\ny: %f\nxVel: %f\nyVel: %f\nindex: %i\n", position.getX(), position.getY(), velocity.getX(), velocity.getY(), sheetIndex );
     }
 }
 
