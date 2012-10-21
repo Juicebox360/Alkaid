@@ -11,7 +11,7 @@ Colour::Colour( int _r, int _g, int _b, int _a )
 {
     init( _r / 255.0f, _g / 255.0f, _b / 255.0f, _a / 255.0f );
 }
-Colour::Colour( float _r, float _g, float _b, float _a )
+Colour::Colour( double _r, double _g, double _b, double _a )
 {
     init( _r, _g, _b, _a );
 }
@@ -21,7 +21,7 @@ Colour::~Colour()
     //dtor
 }
 
-void Colour::init( float _r, float _g, float _b, float _a )
+void Colour::init( double _r, double _g, double _b, double _a )
 {
     setRed( _r );
     setGreen( _g );
@@ -29,22 +29,22 @@ void Colour::init( float _r, float _g, float _b, float _a )
     setAlpha( _a );
 }
 
-float Colour::getRedF() const
+double Colour::getRedF() const
 {
     return r;
 }
 
-float Colour::getGreenF() const
+double Colour::getGreenF() const
 {
     return g;
 }
 
-float Colour::getBlueF() const
+double Colour::getBlueF() const
 {
     return b;
 }
 
-float Colour::getAlphaF() const
+double Colour::getAlphaF() const
 {
     return a;
 }
@@ -69,7 +69,7 @@ int Colour::getAlphaI() const
     return int( ceil( a * 255 ) );
 }
 
-void Colour::setRed( float _r )
+void Colour::setRed( double _r )
 {
     setColourValue( r, _r );
 }
@@ -78,7 +78,7 @@ void Colour::setRed( int _r )
     setRed( _r / 255.0f );
 }
 
-void Colour::setGreen( float _g )
+void Colour::setGreen( double _g )
 {
     setColourValue( g, _g );
 }
@@ -87,7 +87,7 @@ void Colour::setGreen( int _g )
     setGreen( _g / 255.0f );
 }
 
-void Colour::setBlue( float _b )
+void Colour::setBlue( double _b )
 {
     setColourValue( b, _b );
 }
@@ -96,7 +96,7 @@ void Colour::setBlue( int _b )
     setBlue( _b / 255.0f );
 }
 
-void Colour::setAlpha( float _a )
+void Colour::setAlpha( double _a )
 {
     setColourValue( a, _a );
 }
@@ -105,7 +105,7 @@ void Colour::setAlpha( int _a )
     setAlpha( _a / 255.0f );
 }
 
-void Colour::addRed( float _r )
+void Colour::addRed( double _r )
 {
     setColourValue( r, r + _r );
 }
@@ -114,7 +114,7 @@ void Colour::addRed( int _r )
     addRed( _r / 255.0f );
 }
 
-void Colour::addGreen( float _g )
+void Colour::addGreen( double _g )
 {
     setColourValue( g, g + _g );
 }
@@ -123,7 +123,7 @@ void Colour::addGreen( int _g )
     addGreen( _g / 255.0f );
 }
 
-void Colour::addBlue( float _b )
+void Colour::addBlue( double _b )
 {
     setColourValue( b, b + _b );
 }
@@ -132,7 +132,7 @@ void Colour::addBlue( int _b )
     addBlue( _b / 255.0f );
 }
 
-void Colour::addAlpha( float _a )
+void Colour::addAlpha( double _a )
 {
     setColourValue( a, a + _a );
 }
@@ -146,7 +146,7 @@ SDL_Color Colour::toEngineFormat() const
     return SDL_Color {int( ceil( r * 255 ) ), int( ceil( g * 255 ) ), int( ceil( b * 255 ) )};
 }
 
-void Colour::setColourValue( float &valueLoc, float value )
+void Colour::setColourValue( double &valueLoc, double value )
 {
     if ( value <= 0.0f )
     {

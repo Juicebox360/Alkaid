@@ -54,24 +54,27 @@
 		<Unit filename="fonts\04_BITMAP.TTF" />
 		<Unit filename="fonts\sauce8bit.ttf" />
 		<Unit filename="include\InfoSheet.h" />
+		<Unit filename="include\ent\Entity.h" />
+		<Unit filename="include\ent\EntityController.h" />
 		<Unit filename="include\gfx\AnimatedSprite.h" />
 		<Unit filename="include\gfx\Sprite.h" />
 		<Unit filename="include\test.h" />
 		<Unit filename="include\util\Colour.h" />
 		<Unit filename="include\util\Constants.h" />
-		<Unit filename="include\util\MathUtils.h" />
-		<Unit filename="include\util\Vector2f.h" />
+		<Unit filename="include\util\Utils.h" />
+		<Unit filename="include\util\Vector2d.h" />
 		<Unit filename="sheets.png" />
-		<Unit filename="sound\lawy.ogg" />
 		<Unit filename="src\InfoSheet.cpp" />
+		<Unit filename="src\ent\Entity.cpp" />
+		<Unit filename="src\ent\EntityController.cpp" />
 		<Unit filename="src\gfx\AnimatedSprite.cpp" />
 		<Unit filename="src\gfx\Sprite.cpp" />
 		<Unit filename="src\main.cpp" />
 		<Unit filename="src\test.cpp" />
 		<Unit filename="src\util\Colour.cpp" />
 		<Unit filename="src\util\Constants.cpp" />
-		<Unit filename="src\util\MathUtils.cpp" />
-		<Unit filename="src\util\Vector2f.cpp" />
+		<Unit filename="src\util\Utils.cpp" />
+		<Unit filename="src\util\Vector2d.cpp" />
 		<Extensions>
 			<code_completion />
 			<debugger />

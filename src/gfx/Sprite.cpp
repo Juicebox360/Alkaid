@@ -143,41 +143,6 @@ int Sprite::getCount() const
     return countX * countY;
 }
 
-int Sprite::getHorizontalCount() const
-{
-    return countX;
-}
-
-int Sprite::getVerticalCount() const
-{
-    return countY;
-}
-
-int Sprite::getWidth() const
-{
-    return sizeX;
-}
-
-int Sprite::getHeight() const
-{
-    return sizeY;
-}
-
-double Sprite::getCentreX() const
-{
-    return centreX;
-}
-
-double Sprite::getCentreY() const
-{
-    return centreY;
-}
-
-bool Sprite::isVisible() const
-{
-    return visible;
-}
-
 void Sprite::setCentreX( double nCX )
 {
     centreX = nCX;
@@ -200,7 +165,7 @@ void Sprite::toggleVisible()
 
 void Sprite::render( SDL_Surface *screen, double x, double y, int index, double xScale, double yScale, Colour *colour, double theta )
 {
-    Vector2f *coords = indexToCoord( index );
+    Vector2d *coords = indexToCoord( index );
     //printf( "Coords: (%f, %f)\n", coords->getX(), coords->getY() );
     render( screen, x, y, coords->getX(), coords->getY(), xScale, yScale, colour, theta );
     delete coords;
@@ -259,9 +224,9 @@ void Sprite::update( SDL_Surface *screen, int delta )
 {
 }
 
-Vector2f *Sprite::indexToCoord( int i )
+Vector2d *Sprite::indexToCoord( int i )
 {
-    Vector2f *retVal = new Vector2f( 0, 0 );
+    Vector2d *retVal = new Vector2d( 0, 0 );
     if ( i <= 0 )
     {
         retVal->setX( 0 );
@@ -281,7 +246,7 @@ Vector2f *Sprite::indexToCoord( int i )
     return retVal;
 }
 
-int Sprite::coordToIndex( Vector2f &coord )
+int Sprite::coordToIndex( Vector2d &coord )
 {
     return coordToIndex( int( coord.getX() ), int( coord.getY() ) );
 }

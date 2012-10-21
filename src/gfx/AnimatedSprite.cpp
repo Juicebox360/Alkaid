@@ -1,4 +1,5 @@
 #include "gfx/AnimatedSprite.h"
+#include "util/Utils.h"
 
 // TODO: Backward animation. Utilising the same texture sheet for different animation indices
 
@@ -52,31 +53,6 @@ void AnimatedSprite::toggleRepeat()
     repeat = !repeat;
 }
 
-int AnimatedSprite::getAnimationRate() const
-{
-    return rate;
-}
-
-int AnimatedSprite::getAnimationStartIndex() const
-{
-    return animStartIndex;
-}
-
-int AnimatedSprite::getAnimationEndIndex() const
-{
-    return animEndIndex;
-}
-
-int AnimatedSprite::getAnimationIndex() const
-{
-    return animCurrIndex;
-}
-
-bool AnimatedSprite::isRepeating() const
-{
-    return repeat;
-}
-
 void AnimatedSprite::update( SDL_Surface *screen, int delta )
 {
     Sprite::update( screen, delta );
@@ -97,6 +73,7 @@ void AnimatedSprite::update( SDL_Surface *screen, int delta )
         }
         accumulatedTime = 0;
     }
+    printf( Utils::concat( "ind: ", animCurrIndex, "\n" ).c_str() );
 }
 
 void AnimatedSprite::render( SDL_Surface *screen, double x, double y, double xScale, double yScale, Colour *colour, double theta )

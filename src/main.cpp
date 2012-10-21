@@ -17,7 +17,7 @@
 
 #include "gfx/sprite.h"
 #include "gfx/animatedsprite.h"
-#include "util/MathUtils.h"
+#include "util/Utils.h"
 
 #include "InfoSheet.h"
 
@@ -40,8 +40,7 @@ const double ROTATION_RATE = 0.5d;
 const double SHADOW_SPACING = 1.8d;
 const double SCALE_RATE = 0.1d;
 const double CENTRE_ADJUST_RATE = 0.1d;
-
-const float UPDATE_RATE = 1000.f / 30;
+const double UPDATE_RATE = 1000.0d / 30;
 
 const int ALPHA_RATE = 1;
 const int ANIM_RATE = 150;
@@ -55,14 +54,12 @@ TTF_Font *font;
 
 double theta = 0, scaleX = 1.0d, scaleY = 1.0d, centreX = 0, centreY = 0;
 
-float timeLastMs, timeCurrentMs, timeDeltaMs, timeAccumulatedMs;
+double timeLastMs, timeCurrentMs, timeDeltaMs, timeAccumulatedMs;
 std::vector<float> timeFrames;
 
 bool gameRunning = true;
 
 Colour colour( 255, 255, 255 ), bColour( 64, 64, 64, 200 ), fColour( 255, 255, 255, 200 );
-
-std::stringstream sstr;
 
 std::vector<InfoSheet*> sheets;
 
@@ -73,13 +70,6 @@ void musicDone()
     Mix_HaltMusic();
     Mix_FreeMusic( music );
     music = NULL;
-}
-
-std::string itos( int val )
-{
-    sstr.str( "" );
-    sstr << val;
-    return sstr.str();
 }
 
 void handleTTFError()
@@ -235,7 +225,7 @@ void processInput( Sprite &sprite )
         }
     }
 
-    Uint8* keystate = SDL_GetKeyState( NULL );
+    Uint8 *keystate = SDL_GetKeyState( NULL );
 
     if ( keystate[SDLK_LEFT] )
     {
@@ -244,7 +234,7 @@ void processInput( Sprite &sprite )
         {
             theta -= 360.0d;
         }
-        printf( "Theta: %f\n", theta );
+        printf( "Theta: %d\n", theta );
     }
     if ( keystate[SDLK_RIGHT] )
     {
@@ -253,7 +243,7 @@ void processInput( Sprite &sprite )
         {
             theta += 360.0d;
         }
-        printf( "Theta: %f\n", theta );
+        printf( "Theta: %d\n", theta );
     }
     if ( keystate[SDLK_UP] )
     {
@@ -325,63 +315,42 @@ void cleanUp()
     SDL_Quit();
 }
 
-// Cheapest fucking concatenation statement EVER because C++ won't let me variadic std::string
-// (and NO THANK YOU const char *)
-// RAEG Egajlfawjlfja;lfjawlfjja
-std::string concat( const char * prefix, double value, const char * postfix )
-{
-    sstr.str( "" );
-
-    sstr << prefix << value << postfix;
-
-    return sstr.str();
-}
-// Mine ~wareya
-std::string concat( const char * prefix, double value, const char * postfix , double supvalue )
-{
-    sstr.str( "" );
-
-    sstr << prefix << value << postfix << supvalue;
-
-    return sstr.str();
-}
-
 // The parameter list is temporary; the actual version will be handled by a SpriteManager or the like.
-void render( SDL_Surface *screen, Sprite &sprite, AnimatedSprite &anim, AnimatedSprite &paper )
+void render( SDL_Surface *screen, Sprite &sprite, AnimatedSprite &anim, AnimatedSprite *paper )
 {
     glClear( GL_COLOR_BUFFER_BIT );
 
     sprite.render( screen, (SDL_GetVideoInfo()->current_w) / 2, (SDL_GetVideoInfo()->current_h) / 2, index, scaleX, scaleY, &colour, theta );
     anim.render( screen, SDL_GetVideoInfo()->current_w - 70.0d, SDL_GetVideoInfo()->current_h - 70.0d, 2.0d, 2.0d, &Colour::WHITE, 0.0d );
-    paper.render( screen, 70.0d, SDL_GetVideoInfo()->current_h - 70.0d, 2.0d, 2.0d, &Colour::WHITE, 0.0d );
+    paper->render( screen, 70.0d, SDL_GetVideoInfo()->current_h - 70.0d, 2.0d, 2.0d, &Colour::WHITE, 0.0d );
 
     for ( int i = 0; i < sheets.size(); i++ )
     {
         (sheets[i])->render( screen );
     }
 
-    std::string temp = concat( "Left / Right Arrow: Rotation (t = ", theta, ")" );
+    std::string temp = Utils::concat( "Left / Right Arrow: Rotation (t = ", theta, ")" );
     drawTextShaded( font, temp, 10, 10, fColour, bColour );
 
-    temp = concat( "Up / Down Arrow: Alpha transparency (a = ", double( colour.getAlphaI() ), ")" );
+    temp = Utils::concat( "Up / Down Arrow: Alpha transparency (a = ", double( colour.getAlphaI() ), ")" );
     drawTextShaded( font, temp, 10, 30, fColour, bColour );
 
-    temp = concat( "Q / A: Y-scale (scaleY = ", scaleY, ")" );
+    temp = Utils::concat( "Q / A: Y-scale (scaleY = ", scaleY, ")" );
     drawTextShaded( font, temp, 10, 50, fColour, bColour );
 
-    temp = concat( "W / S: X-scale (scaleX = ", scaleX, ")" );
+    temp = Utils::concat( "W / S: X-scale (scaleX = ", scaleX, ")" );
     drawTextShaded( font, temp, 10, 70, fColour, bColour );
 
-    temp = concat( "E / D: X-centre (centreX = ", centreX, ")" );
+    temp = Utils::concat( "E / D: X-centre (centreX = ", centreX, ")" );
     drawTextShaded( font, temp, 10, 90, fColour, bColour );
 
-    temp = concat( "R / F: Y-centre (centreY = ", centreY, ")" );
+    temp = Utils::concat( "R / F: Y-centre (centreY = ", centreY, ")" );
     drawTextShaded( font, temp, 10, 110, fColour, bColour );
 
-    temp = concat( "T / G: Sprite index (index = ", index, ")" );
+    temp = Utils::concat( "T / G: Sprite index (index = ", index, ")" );
     drawTextShaded( font, temp, 10, 130, fColour, bColour );
 
-    temp = concat( "fps (smooth/realtickratio): ",
+    temp = Utils::concat( "fps (smooth/realtickratio): ",
                   1000/(timeFrames.back()-timeFrames.front())*timeFrames.size(), "/",
                   1/(timeFrames.back()-timeFrames[timeFrames.size() - 2])*timeFrames.size()*UPDATE_RATE );
     drawTextShaded( font, temp, 10, 150, fColour, bColour );
@@ -434,11 +403,11 @@ int main( int argc, char **argv )
         exit( EXIT_FAILURE );
     }
 
-    printf( "Completed library inits\n" );
+    printf( "Completed library inits.\n" );
 
     InfoSheet::preInit();
 
-    MathUtils::init();
+    Utils::init();
 
     std::string fontDir;
     fontDir.append( FONTS_DIR );
@@ -456,9 +425,9 @@ int main( int argc, char **argv )
 
     Sprite sprite( "csstrip.png", 32, 32, centreX, centreY );
     AnimatedSprite anim( "csstrip.png", ANIM_RATE, 2, 3, true, 32, 32, 16, 16 );
-    AnimatedSprite paper( "sheets.png", 100, 0, 4, true, 10, 10, 5, 5 );
+    AnimatedSprite *paper = new AnimatedSprite( "sheets.png", 100, 0, 4, true, 10, 10, 5, 5 );
 
-    printf( "Entering game loop\n" );
+    printf( "Entering game loop.\n" );
     while ( gameRunning )
     {
         timeLastMs = timeCurrentMs;
@@ -477,12 +446,12 @@ int main( int argc, char **argv )
             processInput( sprite );
 
             anim.update( screen, timeAccumulatedMs );
-            paper.update( screen, timeAccumulatedMs );
+            paper->update( screen, timeAccumulatedMs );
 
-            if ( MathUtils::randomInt( 1, 100 ) <= SHEET_CHANCE )
+            if ( Utils::randomInt( 1, 100 ) <= SHEET_CHANCE )
             {
-                sheets.push_back( new InfoSheet( SDL_GetVideoInfo()->current_w - 73.0d + (MathUtils::randomInt( 0, 6 ) - 3.0d), SDL_GetVideoInfo()->current_h - 70.0d + (MathUtils::randomInt( 0, 6 ) - 3.0d), (MathUtils::randomInt( 0, 8 ) - 8.0d), (MathUtils::randomInt( 0, 20 ) - 10) / 10.0d ) );
-                printf( "Creating a new sheet. There are now %i sheets.\n", sheets.size() );
+                sheets.push_back( new InfoSheet( SDL_GetVideoInfo()->current_w - 73.0d + (Utils::randomInt( 0, 6 ) - 3.0d), SDL_GetVideoInfo()->current_h - 70.0d + (Utils::randomInt( 0, 6 ) - 3.0d), (Utils::randomInt( 0, 8 ) - 8.0d), (Utils::randomInt( 0, 20 ) - 10) / 10.0d ) );
+                //printf( "Creating a new sheet. There are now %i sheets.\n", sheets.size() );
             }
             if ( sheets.size() > 0 )
             {
@@ -494,7 +463,7 @@ int main( int argc, char **argv )
                 // You only really need to check the first item, it's the "oldest"
                 if ( !((sheets[0])->isVisible()) )
                 {
-                    printf( "Deleting a sheet. There are now %i sheets.\n", sheets.size() );
+                    //printf( "Deleting a sheet. There are now %i sheets.\n", sheets.size() );
                     delete sheets[0];
                     sheets.erase( sheets.begin() );
                 }
@@ -508,11 +477,12 @@ int main( int argc, char **argv )
         }
     }
 
-    printf( "Exiting game loop\n" );
+    printf( "Exiting game loop.\n" );
 
+    delete paper;
     cleanUp();
 
-    printf( "Exiting regularly" );
+    printf( "Exiting regularly." );
 
     exit( EXIT_SUCCESS );
 }

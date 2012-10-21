@@ -21,17 +21,12 @@ class AnimatedSprite : public Sprite
         void setRepeat( bool repetition );
         void toggleRepeat();
 
-        int getAnimationRate() const;
-        int getAnimationStartIndex() const;
-        int getAnimationEndIndex() const;
-        int getAnimationIndex() const;
-        bool isRepeating() const;
+        virtual void update( SDL_Surface *screen, int delta );
+        virtual void render( SDL_Surface *screen, double x, double y, double xScale = 1, double yScale = 1, Colour *colour = &Colour::WHITE, double theta = 0 );
 
-        void update( SDL_Surface *screen, int delta );
-        void render( SDL_Surface *screen, double x, double y, double xScale = 1, double yScale = 1, Colour *colour = &Colour::WHITE, double theta = 0 );
-    protected:
         int rate, accumulatedTime, animStartIndex, animEndIndex, animCurrIndex;
         bool repeat;
+    protected:
     private:
         void init( int animRate, int startIndex, int endIndex, bool repetition );
         void setIndex( int &valueLoc, int value );
