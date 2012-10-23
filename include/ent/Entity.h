@@ -16,7 +16,7 @@ class Entity
         // I DID THESE UNDER DURESS
         // ...sort of
         EntityController *entityControl;
-        Vector2d *position, *velocity, *acceleration;
+        Vector2d *position, *velocity;
         Sprite *sprite;
         int uniqueID, classID;
     protected:

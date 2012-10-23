@@ -351,9 +351,16 @@ void render( SDL_Surface *screen, Sprite &sprite, AnimatedSprite &anim, Animated
     drawTextShaded( font, temp, 10, 130, fColour, bColour );
 
     temp = Utils::concat( "fps (smooth/realtickratio): ",
-                  1000/(timeFrames.back()-timeFrames.front())*timeFrames.size(), "/",
-                  1/(timeFrames.back()-timeFrames[timeFrames.size() - 2])*timeFrames.size()*UPDATE_RATE );
+                          1000.0/(timeFrames.back()-timeFrames.front()) * (timeFrames.size()-1), "/",
+                          1/(timeFrames.back()-timeFrames[timeFrames.size() - 2]) * UPDATE_RATE );
     drawTextShaded( font, temp, 10, 150, fColour, bColour );
+
+    temp = Utils::concat( "timeFrames stats: ",
+                          "back:", timeFrames.back(), " ",
+                          "front:", timeFrames.front(), " ",
+                          "length:", timeFrames.back()-timeFrames.front(), " ",
+                          "size:", timeFrames.size() );
+    drawTextShaded( font, temp, 10, 170, fColour, bColour );
 
     glDisable( GL_TEXTURE_2D );
     glColor4ub( 255, 0, 0, 100 );
@@ -439,7 +446,7 @@ int main( int argc, char **argv )
         while ( timeAccumulatedMs >= UPDATE_RATE )
         {
             timeFrames.push_back(timeCurrentMs);
-            while( timeFrames[0]+1000 < timeLastMs )
+            while( timeFrames[0]+1000 < timeCurrentMs )
                 timeFrames.erase( timeFrames.begin() );
 
             // Update. Physics. Inputs. AI.

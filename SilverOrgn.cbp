@@ -58,6 +58,7 @@
 		<Unit filename="include\ent\EntityController.h" />
 		<Unit filename="include\gfx\AnimatedSprite.h" />
 		<Unit filename="include\gfx\Sprite.h" />
+		<Unit filename="include\sys\Supervisor.h" />
 		<Unit filename="include\test.h" />
 		<Unit filename="include\util\Colour.h" />
 		<Unit filename="include\util\Constants.h" />
@@ -70,6 +71,7 @@
 		<Unit filename="src\gfx\AnimatedSprite.cpp" />
 		<Unit filename="src\gfx\Sprite.cpp" />
 		<Unit filename="src\main.cpp" />
+		<Unit filename="src\sys\Supervisor.cpp" />
 		<Unit filename="src\test.cpp" />
 		<Unit filename="src\util\Colour.cpp" />
 		<Unit filename="src\util\Constants.cpp" />

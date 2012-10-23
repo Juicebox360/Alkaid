@@ -16,7 +16,6 @@ void Entity::init( EntityController *_entityControl, int _classID, Sprite *_spri
     entityControl = _entityControl;
     position = _position;
     velocity = _velocity;
-    acceleration = _acceleration;
     sprite = _sprite;
 
     uniqueID = entityControl->generateNextUniqueID();
