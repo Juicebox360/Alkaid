@@ -32,16 +32,10 @@ void Entity::render( SDL_Surface *screen, double x, double y, int index, double 
 
 void Entity::update( SDL_Surface *screen, int delta )
 {
-    // First, modulate the velocity by acceleration
-    if ( acceleration != NULL && velocity != NULL )
-    {
-        velocity->translate( acceleration->x, acceleration->y );
-    }
-
-    // Then modulate position by velocity
+    // Modulate position by velocity
     if ( velocity != NULL && position != NULL )
     {
-        position->translate( acceleration->x, acceleration->y );
+        position->translate( velocity->x, velocity->y );
     }
 
     // Update the sprite, if we've got one.
