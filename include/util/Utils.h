@@ -14,6 +14,10 @@
 #include <utility>
 #include <iostream>
 
+enum CONSTANTS
+{
+};
+
 class Utils
 {
     public:
@@ -28,11 +32,10 @@ class Utils
 
             return Utils::sstr.str();
         }
-        static int randomInt( int min, int max );
-        static void init();
+        static int random_int( int min, int max );
+        static void pre_init();
     protected:
     private:
-
         template<std::size_t I = 0, typename... Tp>
         static inline typename std::enable_if<I == sizeof...(Tp), void>::type
             concat( std::tuple<Tp...>& t ) {}

@@ -7,21 +7,19 @@ class Vector2d
         Vector2d();
         Vector2d( double _x, double _y );
         virtual ~Vector2d();
-        void translateX( double xTrans );
-        void translateY( double yTrans );
-        void translate( double xTrans, double yTrans );
-        void translate( Vector2d &transVector );
-        void scaleX( double xScale );
-        void scaleY( double yScale );
-        void scale( double xScale, double yScale );
-        void scale( Vector2d &scaleVector );
-        void setX( double _x );
-        void setY( double _y );
-        double getX() const;
-        double getY() const;
+        void translate_x( double x_trans );
+        void translate_y( double y_trans );
+        void translate( double x_trans, double y_trans );
+        void translate( Vector2d &trans_vec );
+        void scale_x( double x_scale );
+        void scale_y( double y_scale );
+        void scale( double x_scale, double y_scale );
+        void scale( Vector2d &scale_vec );
 
         double x;
         double y;
+
+        static Vector2d ZERO_VEC;
     protected:
     private:
 };

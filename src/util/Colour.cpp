@@ -1,5 +1,6 @@
-#include "util/Colour.h"
 #include <math.h>
+
+#include "util/Colour.h"
 
 Colour Colour::WHITE( 255, 255, 255, 255 );
 Colour Colour::BLACK( 0, 0, 0, 255 );
@@ -9,7 +10,7 @@ Colour Colour::BLUE( 0, 0, 255, 255 );
 
 Colour::Colour( int _r, int _g, int _b, int _a )
 {
-    init( _r / 255.0f, _g / 255.0f, _b / 255.0f, _a / 255.0f );
+    init( _r / 255.0d, _g / 255.0d, _b / 255.0d, _a / 255.0d );
 }
 Colour::Colour( double _r, double _g, double _b, double _a )
 {
@@ -23,141 +24,141 @@ Colour::~Colour()
 
 void Colour::init( double _r, double _g, double _b, double _a )
 {
-    setRed( _r );
-    setGreen( _g );
-    setBlue( _b );
-    setAlpha( _a );
+    set_red( _r );
+    set_green( _g );
+    set_blue( _b );
+    set_alpha( _a );
 }
 
-double Colour::getRedF() const
+double Colour::get_red_double() const
 {
     return r;
 }
 
-double Colour::getGreenF() const
+double Colour::get_green_double() const
 {
     return g;
 }
 
-double Colour::getBlueF() const
+double Colour::get_blue_double() const
 {
     return b;
 }
 
-double Colour::getAlphaF() const
+double Colour::get_alpha_double() const
 {
     return a;
 }
 
-int Colour::getRedI() const
+int Colour::get_red_int() const
 {
     return int( ceil( r * 255 ) );
 }
 
-int Colour::getGreenI() const
+int Colour::get_green_int() const
 {
     return int( ceil( g * 255 ) );
 }
 
-int Colour::getBlueI() const
+int Colour::get_blue_int() const
 {
     return int( ceil( b * 255 ) );
 }
 
-int Colour::getAlphaI() const
+int Colour::get_alpha_int() const
 {
     return int( ceil( a * 255 ) );
 }
 
-void Colour::setRed( double _r )
+void Colour::set_red( double _r )
 {
-    setColourValue( r, _r );
+    set_colour_value( r, _r );
 }
-void Colour::setRed( int _r )
+void Colour::set_red( int _r )
 {
-    setRed( _r / 255.0f );
-}
-
-void Colour::setGreen( double _g )
-{
-    setColourValue( g, _g );
-}
-void Colour::setGreen( int _g )
-{
-    setGreen( _g / 255.0f );
+    set_red( _r / 255.0f );
 }
 
-void Colour::setBlue( double _b )
+void Colour::set_green( double _g )
 {
-    setColourValue( b, _b );
+    set_colour_value( g, _g );
 }
-void Colour::setBlue( int _b )
+void Colour::set_green( int _g )
 {
-    setBlue( _b / 255.0f );
-}
-
-void Colour::setAlpha( double _a )
-{
-    setColourValue( a, _a );
-}
-void Colour::setAlpha( int _a )
-{
-    setAlpha( _a / 255.0f );
+    set_green( _g / 255.0f );
 }
 
-void Colour::addRed( double _r )
+void Colour::set_blue( double _b )
 {
-    setColourValue( r, r + _r );
+    set_colour_value( b, _b );
 }
-void Colour::addRed( int _r )
+void Colour::set_blue( int _b )
 {
-    addRed( _r / 255.0f );
-}
-
-void Colour::addGreen( double _g )
-{
-    setColourValue( g, g + _g );
-}
-void Colour::addGreen( int _g )
-{
-    addGreen( _g / 255.0f );
+    set_blue( _b / 255.0f );
 }
 
-void Colour::addBlue( double _b )
+void Colour::set_alpha( double _a )
 {
-    setColourValue( b, b + _b );
+    set_colour_value( a, _a );
 }
-void Colour::addBlue( int _b )
+void Colour::set_alpha( int _a )
 {
-    addBlue( _b / 255.0f );
-}
-
-void Colour::addAlpha( double _a )
-{
-    setColourValue( a, a + _a );
-}
-void Colour::addAlpha( int _a )
-{
-    addAlpha( _a / 255.0f );
+    set_alpha( _a / 255.0f );
 }
 
-SDL_Color Colour::toEngineFormat() const
+void Colour::add_red( double _r )
+{
+    set_colour_value( r, r + _r );
+}
+void Colour::add_red( int _r )
+{
+    add_red( _r / 255.0f );
+}
+
+void Colour::add_green( double _g )
+{
+    set_colour_value( g, g + _g );
+}
+void Colour::add_green( int _g )
+{
+    add_green( _g / 255.0f );
+}
+
+void Colour::add_blue( double _b )
+{
+    set_colour_value( b, b + _b );
+}
+void Colour::add_blue( int _b )
+{
+    add_blue( _b / 255.0f );
+}
+
+void Colour::add_alpha( double _a )
+{
+    set_colour_value( a, a + _a );
+}
+void Colour::add_alpha( int _a )
+{
+    add_alpha( _a / 255.0f );
+}
+
+SDL_Color Colour::engine_format() const
 {
     return SDL_Color {int( ceil( r * 255 ) ), int( ceil( g * 255 ) ), int( ceil( b * 255 ) )};
 }
 
-void Colour::setColourValue( double &valueLoc, double value )
+void Colour::set_colour_value( double &value_loc, double value )
 {
-    if ( value <= 0.0f )
+    if ( value <= 0.0d )
     {
-        valueLoc = 0.0f;
+        value_loc = 0.0d;
     }
-    else if ( value >= 1.0f )
+    else if ( value >= 1.0d )
     {
-        valueLoc = 1.0f;
+        value_loc = 1.0d;
     }
     else
     {
-        valueLoc = value;
+        value_loc = value;
     }
 }

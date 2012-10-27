@@ -1,5 +1,7 @@
 #include "util/Vector2d.h"
 
+Vector2d Vector2d::ZERO_VEC = Vector2d();
+
 Vector2d::Vector2d()
 {
     x = 0;
@@ -16,62 +18,42 @@ Vector2d::~Vector2d()
     //dtor
 }
 
-void Vector2d::translateX( double xTrans )
+void Vector2d::translate_x( double x_trans )
 {
-    x += xTrans;
+    x += x_trans;
 }
 
-void Vector2d::translateY( double yTrans )
+void Vector2d::translate_y( double y_trans )
 {
-    y += yTrans;
+    y += y_trans;
 }
 
-void Vector2d::translate( double xTrans, double yTrans )
+void Vector2d::translate( double x_trans, double y_trans )
 {
-    translateX( xTrans );
-    translateY( yTrans );
+    translate_x( x_trans );
+    translate_y( y_trans );
 }
-void Vector2d::translate( Vector2d &transVector )
+void Vector2d::translate( Vector2d &trans_vec )
 {
-    translate( transVector.x, transVector.y );
-}
-
-void Vector2d::scaleX( double xScale )
-{
-    x *= xScale;
+    translate( trans_vec.x, trans_vec.y );
 }
 
-void Vector2d::scaleY( double yScale )
+void Vector2d::scale_x( double x_scale )
 {
-    y *= yScale;
+    x *= x_scale;
 }
 
-void Vector2d::scale( double xScale, double yScale )
+void Vector2d::scale_y( double y_scale )
 {
-    scaleX( xScale );
-    scaleY( yScale );
-}
-void Vector2d::scale( Vector2d &scaleVector )
-{
-    scale( scaleVector.x, scaleVector.y );
+    y *= y_scale;
 }
 
-void Vector2d::setX( double _x )
+void Vector2d::scale( double x_scale, double y_scale )
 {
-    x = _x;
+    scale_x( x_scale );
+    scale_y( y_scale );
 }
-
-void Vector2d::setY( double _y )
+void Vector2d::scale( Vector2d &scale_vec )
 {
-    y = _y;
-}
-
-double Vector2d::getX() const
-{
-    return x;
-}
-
-double Vector2d::getY() const
-{
-    return y;
+    scale( scale_vec.x, scale_vec.y );
 }

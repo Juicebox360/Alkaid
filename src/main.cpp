@@ -3,213 +3,74 @@
 #else
     #include <stdlib.h>
 #endif
-#ifdef __APPLE__
-#include <SDL/SDL.h>
-#else
-#include <SDL.h>
-#endif
+
+#include <vector>
+#include <string>
 
 #include "SDL.h"
 #include "SDL_image.h"
 #include "SDL_ttf.h"
-#include "SDL_mixer.h"
+//#include "SDL_mixer.h"
 #include "SDL_opengl.h"
 
-#include "gfx/sprite.h"
-#include "gfx/animatedsprite.h"
+#include "world/ent/EntityController.h"
+#include "world/ent/EntityEnums.h"
+#include "world/World.h"
 #include "util/Utils.h"
-
-#include "InfoSheet.h"
-
-#include <vector>
-#include <string>
-#include <sstream>
-#include <iostream>
+#include "util/Constants.h"
+#include "gfx/fnt/FontController.h"
 
 const int WINDOW_WIDTH = 800;
 const int WINDOW_HEIGHT = 600;
-const char* WINDOW_TITLE = "woop woop pull over that ass too fat [woop woop]";
-const std::string FONTS_DIR = "fonts/", SOUND_DIR = "sound/";
-
-const int AUDIO_RATE = 44100;
-const Uint16 AUDIO_FORMAT = AUDIO_S16; /* 16-bit stereo */
-const int AUDIO_CHAN = 2;
-const int AUDIO_BUFFERS = 4096;
-
-const double ROTATION_RATE = 0.5d;
-const double SHADOW_SPACING = 1.8d;
-const double SCALE_RATE = 0.1d;
-const double CENTRE_ADJUST_RATE = 0.1d;
-const double UPDATE_RATE = 1000.0d / 30;
-
-const int ALPHA_RATE = 1;
-const int ANIM_RATE = 150;
-const int SHEET_CHANCE = 5;
+const char *WINDOW_TITLE = "Alkaid Engine Demonstration";
 
 SDL_Event event;
 
-Mix_Music *music = NULL;
-
-TTF_Font *font;
-
-double theta = 0, scaleX = 1.0d, scaleY = 1.0d, centreX = 0, centreY = 0;
-
-double timeLastMs, timeCurrentMs, timeDeltaMs, timeAccumulatedMs;
+double time_last_ms, time_current_ms, time_delta_ms, time_delta;
 std::vector<float> timeFrames;
 
 bool gameRunning = true;
 
-Colour colour( 255, 255, 255 ), bColour( 64, 64, 64, 200 ), fColour( 255, 255, 255, 200 );
+World world;
+FontController fonts;
 
-std::vector<InfoSheet*> sheets;
+SDL_Surface *screen;
 
-int index = 0;
+Font *font;
+Colour bColour( 64, 64, 64, 200 ), fColour( 255, 255, 255, 200 );
 
-void musicDone()
-{
-    Mix_HaltMusic();
-    Mix_FreeMusic( music );
-    music = NULL;
-}
-
-void handleTTFError()
-{
-    printf( "TTF_Init: %s\n", TTF_GetError() );
-    exit( EXIT_FAILURE );
-}
-
-void textProcess( GLuint *destSurf, SDL_Surface *text )
-{
-    GLenum textureFormat;
-    GLint colourFormat = text->format->BytesPerPixel;
-
-    // Alpha channel check
-    if ( colourFormat == 4 )
-    {
-        if ( text->format->Rmask == 0x000000ff )
-        {
-            textureFormat = GL_RGBA;
-        }
-        else
-        {
-            textureFormat = GL_BGRA;
-        }
-    }
-    else if ( colourFormat == 3 )
-    {
-        if ( text->format->Rmask == 0x000000ff )
-        {
-            textureFormat = GL_RGB;
-        }
-        else
-        {
-            textureFormat = GL_BGR;
-        }
-    }
-    else
-    {
-        printf( "Warning! A text's colourdata is not truecolour." );
-    }
-
-    glGenTextures( 1, destSurf );
-    glBindTexture( GL_TEXTURE_2D, *destSurf );
-    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
-    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
-    glTexImage2D( GL_TEXTURE_2D, 0, colourFormat, text->w, text->h, 0, textureFormat, GL_UNSIGNED_BYTE, text->pixels );
-
-    if ( text )
-    {
-        SDL_FreeSurface( text );
-    }
-}
-
-void drawTextShaded( TTF_Font *font, std::string &text, int dX, int dY, Colour &foregroundColour, Colour &backgroundColour )
-{
-    SDL_Surface *textSurface;
-
-    if ( !(textSurface = TTF_RenderUTF8_Blended( font, text.c_str(), {255, 255, 255} ) ) )
-    {
-        handleTTFError();
-    }
-
-    int w = textSurface->w, h = textSurface->h;
-
-    GLuint texture;
-    textProcess( &texture, textSurface );
-
-    glTranslatef( dX + SHADOW_SPACING, dY + SHADOW_SPACING, 0.0 );
-
-    glBindTexture( GL_TEXTURE_2D, texture );
-    glColor4ub( backgroundColour.getRedI(), backgroundColour.getGreenI(), backgroundColour.getBlueI(), backgroundColour.getAlphaI() );
-    glEnable( GL_TEXTURE_2D );
-
-    glBegin( GL_QUADS );
-    glTexCoord2i( 0, 0 );
-    glVertex3f( 0, 0, 0 );
-    glTexCoord2i( 1, 0 );
-    glVertex3f( w, 0, 0 );
-    glTexCoord2i( 1, 1 );
-    glVertex3f( w, h, 0 );
-    glTexCoord2i( 0, 1 );
-    glVertex3f( 0, h, 0 );
-    glEnd();
-
-    glDisable( GL_TEXTURE_2D );
-    glLoadIdentity();
-
-    //glClear( GL_COLOR_BUFFER_BIT );
-    glTranslatef( dX, dY, 0.0 );
-
-    glBindTexture( GL_TEXTURE_2D, texture );
-    glColor4ub( foregroundColour.getRedI(), foregroundColour.getGreenI(), foregroundColour.getBlueI(), foregroundColour.getAlphaI() );
-    glEnable( GL_TEXTURE_2D );
-
-    glBegin( GL_QUADS );
-    glTexCoord2i( 0, 0 );
-    glVertex3f( 0, 0, 0 );
-    glTexCoord2i( 1, 0 );
-    glVertex3f( w, 0, 0 );
-    glTexCoord2i( 1, 1 );
-    glVertex3f( w, h, 0 );
-    glTexCoord2i( 0, 1 );
-    glVertex3f( 0, h, 0 );
-    glEnd();
-
-    glDisable( GL_TEXTURE_2D );
-    glColor4ub( 255, 255, 255, 255 );
-    glLoadIdentity();
-
-    glDeleteTextures( 1, &texture );
-}
-
-void processKey( SDL_KeyboardEvent key, Sprite &sprite )
+void processKey( SDL_KeyboardEvent key )
 {
     switch ( key.keysym.sym )
     {
-        case SDLK_t:
+        case SDLK_1:
             if ( key.state == SDL_PRESSED )
             {
-                if ( index < sprite.getCount() )
-                {
-                    index++;
-                    printf( "Index now at %i\n", index );
-                }
+                printf( "Making a Runner\n" );
+
+                world.get_entity_controller()->entity_create( ENTITY_RUNNER, &world, new Vector2d( Utils::random_int( 0, SDL_GetVideoInfo()->current_w ), Utils::random_int( 0, SDL_GetVideoInfo()->current_h ) ) );
             }
             break;
-        case SDLK_g:
+        case SDLK_2:
             if ( key.state == SDL_PRESSED )
             {
-                if ( index > 0 )
-                {
-                    index--;
-                    printf( "Index now at %i\n", index );
-                }
+                printf( "Making a Rocketman\n" );
+
+                world.get_entity_controller()->entity_create( ENTITY_ROCKETMAN, &world, new Vector2d( Utils::random_int( 0, SDL_GetVideoInfo()->current_w ), Utils::random_int( 0, SDL_GetVideoInfo()->current_h ) ) );
+            }
+            break;
+        case SDLK_3:
+            if ( key.state == SDL_PRESSED )
+            {
+                printf( "Making a Healer\n" );
+
+                world.get_entity_controller()->entity_create( ENTITY_HEALER, &world, new Vector2d( Utils::random_int( 0, SDL_GetVideoInfo()->current_w ), Utils::random_int( 0, SDL_GetVideoInfo()->current_h ) ) );
             }
             break;
     }
 }
 
-void processInput( Sprite &sprite )
+void processInput()
 {
     if ( SDL_PollEvent( &event ) )
     {
@@ -220,78 +81,21 @@ void processInput( Sprite &sprite )
                 break;
             case SDL_KEYDOWN:
             case SDL_KEYUP:
-                processKey( event.key, sprite );
+                processKey( event.key );
                 break;
         }
     }
 
+    /*
     Uint8 *keystate = SDL_GetKeyState( NULL );
 
     if ( keystate[SDLK_LEFT] )
     {
-        theta += ROTATION_RATE;
-        if ( theta >= 360.0d )
-        {
-            theta -= 360.0d;
-        }
-        printf( "Theta: %d\n", theta );
     }
-    if ( keystate[SDLK_RIGHT] )
-    {
-        theta -= ROTATION_RATE;
-        if ( theta < 0.0d )
-        {
-            theta += 360.0d;
-        }
-        printf( "Theta: %d\n", theta );
-    }
-    if ( keystate[SDLK_UP] )
-    {
-        colour.addAlpha( ALPHA_RATE );
-    }
-    if ( keystate[SDLK_DOWN] )
-    {
-        colour.addAlpha( -ALPHA_RATE );
-    }
-    if ( keystate[SDLK_q] )
-    {
-        scaleY += SCALE_RATE;
-    }
-    if ( keystate[SDLK_a] )
-    {
-        scaleY -= SCALE_RATE;
-    }
-    if ( keystate[SDLK_w] )
-    {
-        scaleX += SCALE_RATE;
-    }
-    if ( keystate[SDLK_s] )
-    {
-        scaleX -= SCALE_RATE;
-    }
-    if ( keystate[SDLK_e] )
-    {
-        centreX += CENTRE_ADJUST_RATE;
-        sprite.setCentreX( centreX );
-    }
-    if ( keystate[SDLK_d] )
-    {
-        centreX -= CENTRE_ADJUST_RATE;
-        sprite.setCentreX( centreX );
-    }
-    if ( keystate[SDLK_r] )
-    {
-        centreY += CENTRE_ADJUST_RATE;
-        sprite.setCentreY( centreY );
-    }
-    if ( keystate[SDLK_f] )
-    {
-        centreY -= CENTRE_ADJUST_RATE;
-        sprite.setCentreY( centreY );
-    }
+    */
 }
 
-void initGL()
+void init_gl()
 {
     glClearColor( 0.1f, 0.1f, 0.3f, 0.0f );
     glViewport( 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT );
@@ -305,86 +109,7 @@ void initGL()
     glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
 }
 
-void cleanUp()
-{
-    Mix_CloseAudio();
-
-    TTF_CloseFont( font );
-    TTF_Quit();
-
-    SDL_Quit();
-}
-
-// The parameter list is temporary; the actual version will be handled by a SpriteManager or the like.
-void render( SDL_Surface *screen, Sprite &sprite, AnimatedSprite &anim, AnimatedSprite *paper )
-{
-    glClear( GL_COLOR_BUFFER_BIT );
-
-    sprite.render( screen, (SDL_GetVideoInfo()->current_w) / 2, (SDL_GetVideoInfo()->current_h) / 2, index, scaleX, scaleY, &colour, theta );
-    anim.render( screen, SDL_GetVideoInfo()->current_w - 70.0d, SDL_GetVideoInfo()->current_h - 70.0d, 2.0d, 2.0d, &Colour::WHITE, 0.0d );
-    paper->render( screen, 70.0d, SDL_GetVideoInfo()->current_h - 70.0d, 2.0d, 2.0d, &Colour::WHITE, 0.0d );
-
-    for ( int i = 0; i < sheets.size(); i++ )
-    {
-        (sheets[i])->render( screen );
-    }
-
-    std::string temp = Utils::concat( "Left / Right Arrow: Rotation (t = ", theta, ")" );
-    drawTextShaded( font, temp, 10, 10, fColour, bColour );
-
-    temp = Utils::concat( "Up / Down Arrow: Alpha transparency (a = ", double( colour.getAlphaI() ), ")" );
-    drawTextShaded( font, temp, 10, 30, fColour, bColour );
-
-    temp = Utils::concat( "Q / A: Y-scale (scaleY = ", scaleY, ")" );
-    drawTextShaded( font, temp, 10, 50, fColour, bColour );
-
-    temp = Utils::concat( "W / S: X-scale (scaleX = ", scaleX, ")" );
-    drawTextShaded( font, temp, 10, 70, fColour, bColour );
-
-    temp = Utils::concat( "E / D: X-centre (centreX = ", centreX, ")" );
-    drawTextShaded( font, temp, 10, 90, fColour, bColour );
-
-    temp = Utils::concat( "R / F: Y-centre (centreY = ", centreY, ")" );
-    drawTextShaded( font, temp, 10, 110, fColour, bColour );
-
-    temp = Utils::concat( "T / G: Sprite index (index = ", index, ")" );
-    drawTextShaded( font, temp, 10, 130, fColour, bColour );
-
-    temp = Utils::concat( "fps (smooth/realtickratio): ",
-                          1000.0/(timeFrames.back()-timeFrames.front()) * (timeFrames.size()-1), "/",
-                          1/(timeFrames.back()-timeFrames[timeFrames.size() - 2]) * UPDATE_RATE );
-    drawTextShaded( font, temp, 10, 150, fColour, bColour );
-
-    temp = Utils::concat( "timeFrames stats: ",
-                          "back:", timeFrames.back(), " ",
-                          "front:", timeFrames.front(), " ",
-                          "length:", timeFrames.back()-timeFrames.front(), " ",
-                          "size:", timeFrames.size() );
-    drawTextShaded( font, temp, 10, 170, fColour, bColour );
-
-    glDisable( GL_TEXTURE_2D );
-    glColor4ub( 255, 0, 0, 100 );
-    glLineWidth( 1.0f );
-
-    glBegin( GL_LINES );
-    glVertex2i( (SDL_GetVideoInfo()->current_w) / 2, 0 );
-    glVertex2i( (SDL_GetVideoInfo()->current_w) / 2, SDL_GetVideoInfo()->current_h );
-    glEnd();
-
-    glBegin( GL_LINES );
-    glVertex2i( 0, (SDL_GetVideoInfo()->current_h) / 2 );
-    glVertex2i( SDL_GetVideoInfo()->current_w, (SDL_GetVideoInfo()->current_h) / 2 );
-    glEnd();
-
-    glColor4ub( 255, 255, 255, 255 );
-
-    glEnable( GL_TEXTURE_2D );
-
-    // Refresh
-    SDL_GL_SwapBuffers();
-}
-
-int main( int argc, char **argv )
+void pre_init()
 {
     printf( "Initialising.\n" );
 
@@ -403,90 +128,76 @@ int main( int argc, char **argv )
         printf( "Unable to initialise SDL_TTF: %s\n", TTF_GetError() );
         exit( EXIT_FAILURE );
     }
-    printf( "Init: SDL_Mixer...\n" );
-    if ( Mix_OpenAudio( AUDIO_RATE, AUDIO_FORMAT, AUDIO_CHAN, AUDIO_BUFFERS ) != 0 )
-    {
-        printf( "Unable to initialise SDL_Mixer: %s\n", Mix_GetError() );
-        exit( EXIT_FAILURE );
-    }
-
     printf( "Completed library inits.\n" );
 
-    InfoSheet::preInit();
-
-    Utils::init();
-
-    std::string fontDir;
-    fontDir.append( FONTS_DIR );
-    fontDir.append( "sauce8bit.ttf" );
-    font = TTF_OpenFont( fontDir.c_str(), 32 );
+    EntityController::pre_init();
+    Utils::pre_init();
 
     SDL_GL_SetAttribute( SDL_GL_DOUBLEBUFFER, true );
 
-    SDL_Surface *screen = SDL_SetVideoMode( WINDOW_WIDTH, WINDOW_HEIGHT, 0, SDL_OPENGL | SDL_HWSURFACE | SDL_GL_DOUBLEBUFFER );
+    screen = SDL_SetVideoMode( WINDOW_WIDTH, WINDOW_HEIGHT, 0, SDL_OPENGL | SDL_HWSURFACE | SDL_GL_DOUBLEBUFFER );
 
     // GL bullshit
-    initGL();
+    init_gl();
 
     SDL_WM_SetCaption( WINDOW_TITLE, 0 );
+}
 
-    Sprite sprite( "csstrip.png", 32, 32, centreX, centreY );
-    AnimatedSprite anim( "csstrip.png", ANIM_RATE, 2, 3, true, 32, 32, 16, 16 );
-    AnimatedSprite *paper = new AnimatedSprite( "sheets.png", 100, 0, 4, true, 10, 10, 5, 5 );
+void cleanUp()
+{
+    //Mix_CloseAudio();
+
+    fonts.clean_up();
+    TTF_Quit();
+
+    SDL_Quit();
+}
+
+void render( SDL_Surface *screen )
+{
+    glClear( GL_COLOR_BUFFER_BIT );
+
+    world.render( screen );
+
+    // Text
+    font->draw_text_shaded( "Press 1 to make a Runner, 2 to make a Rocketman, and 3 to make a Healer.", 5.0d, 5.0d, 1.8d, fColour, bColour );
+
+    // Refresh
+    SDL_GL_SwapBuffers();
+}
+
+int main( int argc, char **argv )
+{
+    pre_init();
+
+    font = fonts.create_font( "sauce8bit.ttf", 32 );
 
     printf( "Entering game loop.\n" );
     while ( gameRunning )
     {
-        timeLastMs = timeCurrentMs;
-        timeCurrentMs = SDL_GetTicks();
-        timeDeltaMs = timeCurrentMs - timeLastMs;
-        timeAccumulatedMs += timeDeltaMs;
+        time_last_ms = time_current_ms;
+        time_current_ms = SDL_GetTicks();
+        time_delta_ms = time_current_ms - time_last_ms;
+        time_delta = time_delta_ms / 1000.0d;
 
-        //this is a while just in case the FPS goes below the update rate
-        while ( timeAccumulatedMs >= UPDATE_RATE )
+        timeFrames.push_back( time_current_ms );
+        while ( timeFrames[0] + 1000 < time_current_ms )
         {
-            timeFrames.push_back(timeCurrentMs);
-            while( timeFrames[0]+1000 < timeCurrentMs )
-                timeFrames.erase( timeFrames.begin() );
-
-            // Update. Physics. Inputs. AI.
-            processInput( sprite );
-
-            anim.update( screen, timeAccumulatedMs );
-            paper->update( screen, timeAccumulatedMs );
-
-            if ( Utils::randomInt( 1, 100 ) <= SHEET_CHANCE )
-            {
-                sheets.push_back( new InfoSheet( SDL_GetVideoInfo()->current_w - 73.0d + (Utils::randomInt( 0, 6 ) - 3.0d), SDL_GetVideoInfo()->current_h - 70.0d + (Utils::randomInt( 0, 6 ) - 3.0d), (Utils::randomInt( 0, 8 ) - 8.0d), (Utils::randomInt( 0, 20 ) - 10) / 10.0d ) );
-                //printf( "Creating a new sheet. There are now %i sheets.\n", sheets.size() );
-            }
-            if ( sheets.size() > 0 )
-            {
-                for ( int i = 0; i < sheets.size(); i++ )
-                {
-                    (sheets[i])->update( screen, timeAccumulatedMs );
-                }
-
-                // You only really need to check the first item, it's the "oldest"
-                if ( !((sheets[0])->isVisible()) )
-                {
-                    //printf( "Deleting a sheet. There are now %i sheets.\n", sheets.size() );
-                    delete sheets[0];
-                    sheets.erase( sheets.begin() );
-                }
-            }
-
-            timeAccumulatedMs -= UPDATE_RATE;
-
-            // Render everything if the updating for this tick is done
-            if( timeAccumulatedMs < UPDATE_RATE )
-                render( screen, sprite, anim, paper );
+            timeFrames.erase( timeFrames.begin() );
         }
-    }
 
+        //printf( "Apparently, FPS is %f.\n", 1000.0 / (timeFrames.back() - timeFrames.front()) * (timeFrames.size() - 1) );
+
+        // Update. Physics. Inputs. AI.
+        processInput();
+
+        world.update( screen, time_delta_ms );
+
+        // Render everything if the updating for this tick is done
+        render( screen );
+    }
     printf( "Exiting game loop.\n" );
 
-    delete paper;
     cleanUp();
 
     printf( "Exiting regularly." );
