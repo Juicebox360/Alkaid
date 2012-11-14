@@ -13,7 +13,7 @@
 //#include "SDL_mixer.h"
 #include "SDL_opengl.h"
 
-#include "world/ent/EntityController.h"
+#include "world/ent/Supervisor.h"
 #include "world/ent/EntityEnums.h"
 #include "world/World.h"
 #include "util/Utils.h"
@@ -48,7 +48,7 @@ void processKey( SDL_KeyboardEvent key )
             {
                 printf( "Making a Runner\n" );
 
-                world.get_entity_controller()->entity_create( ENTITY_RUNNER, &world, new Vector2d( Utils::random_int( 0, SDL_GetVideoInfo()->current_w ), Utils::random_int( 0, SDL_GetVideoInfo()->current_h ) ) );
+                world.get_entity_supervisor()->entity_create( ENTITY_RUNNER, &world, new Vector2d( Utils::random_int( 0, SDL_GetVideoInfo()->current_w ), Utils::random_int( 0, SDL_GetVideoInfo()->current_h ) ) );
             }
             break;
         case SDLK_2:
@@ -56,7 +56,7 @@ void processKey( SDL_KeyboardEvent key )
             {
                 printf( "Making a Rocketman\n" );
 
-                world.get_entity_controller()->entity_create( ENTITY_ROCKETMAN, &world, new Vector2d( Utils::random_int( 0, SDL_GetVideoInfo()->current_w ), Utils::random_int( 0, SDL_GetVideoInfo()->current_h ) ) );
+                world.get_entity_supervisor()->entity_create( ENTITY_ROCKETMAN, &world, new Vector2d( Utils::random_int( 0, SDL_GetVideoInfo()->current_w ), Utils::random_int( 0, SDL_GetVideoInfo()->current_h ) ) );
             }
             break;
         case SDLK_3:
@@ -64,7 +64,26 @@ void processKey( SDL_KeyboardEvent key )
             {
                 printf( "Making a Healer\n" );
 
-                world.get_entity_controller()->entity_create( ENTITY_HEALER, &world, new Vector2d( Utils::random_int( 0, SDL_GetVideoInfo()->current_w ), Utils::random_int( 0, SDL_GetVideoInfo()->current_h ) ) );
+                world.get_entity_supervisor()->entity_create( ENTITY_HEALER, &world, new Vector2d( Utils::random_int( 0, SDL_GetVideoInfo()->current_w ), Utils::random_int( 0, SDL_GetVideoInfo()->current_h ) ) );
+            }
+            break;
+        case SDLK_0:
+            if ( key.state == SDL_PRESSED )
+            {
+                printf( "Clearing all entities\n" );
+
+                world.get_entity_supervisor()->reset();
+            }
+            break;
+        case SDLK_8:
+            if ( key.state == SDL_PRESSED )
+            {
+                if ( world.get_entity_supervisor()->entity_count() > 0 )
+                {
+                    printf( "Clearing the first entity\n" );
+
+                    world.get_entity_supervisor()->entity_kill( &(world.get_entity_supervisor()->entity_list()->at( 0 )) );
+                }
             }
             break;
     }
@@ -130,17 +149,24 @@ void pre_init()
     }
     printf( "Completed library inits.\n" );
 
-    EntityController::pre_init();
+    printf( "Pre-initialisation of Supervisor.\n" );
+    Supervisor::pre_init();
+    printf( "Pre-initialisation of Utils.\n" );
     Utils::pre_init();
 
+    printf( "Setting Double-buffer.\n" );
     SDL_GL_SetAttribute( SDL_GL_DOUBLEBUFFER, true );
 
+    printf( "Setting video mode.\n" );
     screen = SDL_SetVideoMode( WINDOW_WIDTH, WINDOW_HEIGHT, 0, SDL_OPENGL | SDL_HWSURFACE | SDL_GL_DOUBLEBUFFER );
 
     // GL bullshit
+    printf( "Initialising OpenGL.\n" );
     init_gl();
 
     SDL_WM_SetCaption( WINDOW_TITLE, 0 );
+
+    printf( "Initialisation completed!\n" );
 }
 
 void cleanUp()
@@ -161,6 +187,7 @@ void render( SDL_Surface *screen )
 
     // Text
     font->draw_text_shaded( "Press 1 to make a Runner, 2 to make a Rocketman, and 3 to make a Healer.", 5.0d, 5.0d, 1.8d, fColour, bColour );
+    font->draw_text_shaded( "Press 0 to destroy all entities.", 5.0d, 500.0d, 1.8d, fColour, bColour );
 
     // Refresh
     SDL_GL_SwapBuffers();

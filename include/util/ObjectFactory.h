@@ -23,10 +23,8 @@
 #ifndef OBJECT_FACTORY_H
 #define OBJECT_FACTORY_H
 
-
 #include <map>
 #include "MacroRepeat.h"
-
 
 template <typename CtorSignature, typename UniqueIdType> class ObjectFactory;
 

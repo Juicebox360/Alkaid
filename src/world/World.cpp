@@ -1,20 +1,18 @@
 #include "SDL.h"
 
 #include "world/World.h"
-#include "world/ent/EntityController.h"
+#include "world/ent/Supervisor.h"
 
 World::World()
 {
-    entities = new EntityController();
+    entities = new Supervisor();
 }
 
 World::~World()
 {
-    delete entities;
-    entities = NULL;
 }
 
-EntityController *World::get_entity_controller()
+Supervisor *World::get_entity_supervisor()
 {
     return entities;
 }

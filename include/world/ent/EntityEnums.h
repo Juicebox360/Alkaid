@@ -21,7 +21,7 @@ class World;
 class EntityEnums
 {
     public:
-        static void pre_init( ObjectFactory<Entity *(World*, Vector2d*), int> &factory );
+        static void pre_init( ObjectFactory<Entity* (World*, Vector2d*), int> &factory );
 };
 
 #endif // ENTITYENUMS_H

@@ -7,23 +7,25 @@
 #include "gfx/spr/Sprite.h"
 #include "util/Colour.h"
 
+#include "util/Utils.h"
+
 Sprite::Sprite()
 {
     init( NULL, 0, 0, 0, 0 );
     visible = false;
 }
-Sprite::Sprite( const Sprite *sprite )
+Sprite::Sprite( const Sprite &sprite )
 {
-    texture = sprite->texture;
-    texture_format = sprite->texture_format;
-    colour_format = sprite->colour_format;
-    count_x = sprite->count_x;
-    count_y = sprite->count_y;
-    w = sprite->w;
-    h = sprite->h;
-    centre_x = sprite->centre_x;
-    centre_y = sprite->centre_y;
-    visible = sprite->visible;
+    texture = sprite.texture;
+    texture_format = sprite.texture_format;
+    colour_format = sprite.colour_format;
+    count_x = sprite.count_x;
+    count_y = sprite.count_y;
+    w = sprite.w;
+    h = sprite.h;
+    centre_x = sprite.centre_x;
+    centre_y = sprite.centre_y;
+    visible = sprite.visible;
 }
 Sprite::Sprite( SDL_Surface *image, int sprite_width, int sprite_height, double sprite_centre_x, double sprite_centre_y )
 {
@@ -37,6 +39,25 @@ Sprite::Sprite( std::string filename, int sprite_width, int sprite_height, doubl
 Sprite::~Sprite()
 {
     glDeleteTextures( 1, &texture );
+}
+
+Sprite &Sprite::operator=( const Sprite &other )
+{
+    if ( this != &other )
+    {
+        texture = other.texture;
+        //printf( Utils::concat( "Old texture value: ", sprite->texture, "\nOld texture address: ", &(sprite->texture), "\nNew texture value: ", texture, "\nNew texture address: ", &texture, "\n" ).c_str() );
+        texture_format = other.texture_format;
+        colour_format = other.colour_format;
+        count_x = other.count_x;
+        count_y = other.count_y;
+        w = other.w;
+        h = other.h;
+        centre_x = other.centre_x;
+        centre_y = other.centre_y;
+        visible = other.visible;
+    }
+    return *this;
 }
 
 void Sprite::init( SDL_Surface *image, int sprite_width, int sprite_height, double sprite_centre_x, double sprite_centre_y )

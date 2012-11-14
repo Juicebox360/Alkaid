@@ -4,11 +4,9 @@
 #include "SDL.h"
 
 #include "world/World.h"
-#include "world/ent/EntityController.h"
 #include "gfx/spr/Sprite.h"
 #include "util/Vector2d.h"
 
-class EntityController;
 class World;
 
 class Entity
@@ -23,7 +21,7 @@ class Entity
         World *world;
         Vector2d *position, *velocity;
         Sprite *sprite;
-        long unique_id, class_id;
+        long class_id;
     protected:
     private:
         void init( World *_world, int _class_id, Sprite *_sprite, Vector2d *_position, Vector2d *_velocity );

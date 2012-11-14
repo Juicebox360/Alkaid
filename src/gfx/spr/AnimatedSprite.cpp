@@ -1,12 +1,49 @@
 #include "gfx/spr/AnimatedSprite.h"
 #include "util/Utils.h"
 
-// TODO: Backward animation. Utilising the same texture sheet for different animation indices
+// TODO: Backward animation.
+
+AnimatedSprite::AnimatedSprite( const AnimatedSprite &animated_sprite ) : Sprite( animated_sprite )
+{
+    init( animated_sprite.rate, animated_sprite.start_index, animated_sprite.end_index, animated_sprite.repeat );
+}
+AnimatedSprite::AnimatedSprite( const Sprite &sprite, double _rate, int _start_index, int _end_index, bool _repeat ) : Sprite( sprite )
+{
+    init( _rate, _start_index, _end_index, _repeat );
+}
+AnimatedSprite::AnimatedSprite( SDL_Surface *image, double _rate, int _start_index, int _end_index, bool _repeat, int sprite_width, int sprite_height, double sprite_centre_x, double sprite_centre_y ) : Sprite( image, sprite_width, sprite_height, sprite_centre_x, sprite_centre_y )
+{
+    init( _rate, _start_index, _end_index, _repeat );
+}
+AnimatedSprite::AnimatedSprite( std::string filename, double _rate, int _start_index, int _end_index, bool _repeat, int sprite_width, int sprite_height, double sprite_centre_x, double sprite_centre_y ) : Sprite( filename, sprite_width, sprite_height, sprite_centre_x, sprite_centre_y )
+{
+    init( _rate, _start_index, _end_index, _repeat );
+}
 
 AnimatedSprite::~AnimatedSprite()
 {
     //dtor
 }
+
+AnimatedSprite &AnimatedSprite::operator=( const AnimatedSprite &other )
+{
+    if ( this != &other )
+    {
+        texture = other.texture;
+        texture_format = other.texture_format;
+        colour_format = other.colour_format;
+        count_x = other.count_x;
+        count_y = other.count_y;
+        w = other.w;
+        h = other.h;
+        centre_x = other.centre_x;
+        centre_y = other.centre_y;
+        visible = other.visible;
+        init( other.rate, other.start_index, other.end_index, other.repeat );
+    }
+    return *this;
+}
+
 
 void AnimatedSprite::init( double _rate, int _start_index, int _end_index, bool _repeat )
 {

@@ -10,9 +10,9 @@
 
 // Add Entity type registrations here.
 // Don't forget to add the entity
-// types in EntityEnums.h and the header
-// file above!
-void EntityEnums::pre_init( ObjectFactory<Entity *(World*, Vector2d*), int> &factory )
+// types in EntityEnums.h and the necessary
+// header file above!
+void EntityEnums::pre_init( ObjectFactory<Entity* (World*, Vector2d*), int> &factory )
 {
     // Format: factory.Register<ClassName>( ENUM_NAME );
     //factory.Register<>(  );

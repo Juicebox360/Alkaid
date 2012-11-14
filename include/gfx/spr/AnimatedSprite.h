@@ -10,10 +10,13 @@
 class AnimatedSprite : public Sprite
 {
     public:
-        AnimatedSprite( const AnimatedSprite *animated_sprite ) : Sprite( animated_sprite ) { init( animated_sprite->rate, animated_sprite->start_index, animated_sprite->end_index, animated_sprite->repeat ); };
-        AnimatedSprite( SDL_Surface *image, double _rate = 0, int _start_index = 0, int _end_index = -1, bool _repeat = true, int sprite_width = 0, int sprite_height = 0, double sprite_centre_x = 0, double sprite_centre_y = 0 ) : Sprite( image, sprite_width, sprite_height, sprite_centre_x, sprite_centre_y ) { init( _rate, _start_index, _end_index, _repeat ); };
-        AnimatedSprite( std::string filename, double _rate = 0, int _start_index = 0, int _end_index = -1, bool _repeat = true, int sprite_width = 0, int sprite_height = 0, double sprite_centre_x = 0, double sprite_centre_y = 0 ) : Sprite( filename, sprite_width, sprite_height, sprite_centre_x, sprite_centre_y ) { init( _rate, _start_index, _end_index, _repeat ); };
+        AnimatedSprite( const AnimatedSprite &animated_sprite );
+        AnimatedSprite( const Sprite &sprite, double _rate = 0, int _start_index = 0, int _end_index = -1, bool _repeat = true );
+        AnimatedSprite( SDL_Surface *image, double _rate = 0, int _start_index = 0, int _end_index = -1, bool _repeat = true, int sprite_width = 0, int sprite_height = 0, double sprite_centre_x = 0, double sprite_centre_y = 0 );
+        AnimatedSprite( std::string filename, double _rate = 0, int _start_index = 0, int _end_index = -1, bool _repeat = true, int sprite_width = 0, int sprite_height = 0, double sprite_centre_x = 0, double sprite_centre_y = 0 );
         virtual ~AnimatedSprite();
+
+        AnimatedSprite &operator=( const AnimatedSprite &other );
 
         void set_rate( double _rate );
         void set_start_index( int index );

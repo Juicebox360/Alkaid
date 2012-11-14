@@ -3,9 +3,9 @@
 
 #include <SDL.h>
 
-#include "world/ent/EntityController.h"
+#include "world/ent/Supervisor.h"
 
-class EntityController;
+class Supervisor;
 
 class World
 {
@@ -13,13 +13,14 @@ class World
         World();
         virtual ~World();
 
-        EntityController *get_entity_controller();
+        Supervisor *get_entity_supervisor();
 
         virtual void render( SDL_Surface *screen );
         virtual void update( SDL_Surface *screen, double delta );
+
+        Supervisor *entities;
     protected:
     private:
-        EntityController *entities;
 };
 
 #endif // WORLD_H

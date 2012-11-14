@@ -1,6 +1,8 @@
 #include "gfx/spr/Sprite.h"
 #include "world/ent/Entity.h"
 
+#include "util/Utils.h"
+
 Entity::Entity( World *_world, int _class_id, Sprite *_sprite, Vector2d *_position, Vector2d *_velocity )
 {
     init( _world, _class_id, _sprite, _position, _velocity );
@@ -23,11 +25,9 @@ void Entity::init( World *_world, int _class_id, Sprite *_sprite, Vector2d *_pos
     velocity = _velocity;
     sprite = _sprite;
 
-    unique_id = world->get_entity_controller()->generate_next_unique_id();
     class_id = _class_id;
 }
 
-//void Entity::render( SDL_Surface *screen, double x, double y, int index, double x_scale, double y_scale, Colour *colour, double theta )
 void Entity::render( SDL_Surface *screen )
 {
     if ( sprite != NULL )

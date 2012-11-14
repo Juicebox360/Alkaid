@@ -5,9 +5,10 @@
 #include "world/ent/act/Actor.h"
 #include "world/ent/act/char/Healer.h"
 #include "gfx/spr/AnimatedSprite.h"
-#include "gfx/spr/Sprite.h"
 
-Sprite *Healer::spr = NULL;
+Healer::Healer( World *_world, Vector2d *_position ) : Actor( _world, CLASS_ID, new AnimatedSprite( spr() ), _position )
+{
+}
 
 Healer::~Healer()
 {
@@ -24,12 +25,8 @@ void Healer::update( SDL_Surface *screen, double delta )
     Actor::update( screen, delta );
 }
 
-void Healer::init()
+AnimatedSprite &Healer::spr()
 {
-    if ( Healer::spr == NULL )
-    {
-        //Healer::spr = new Sprite( Utils::concat( Constants::SPRITE_DIR, "class/SoldierStrip.png" ), 64, 64, 32, 32 );
-        Healer::spr = new AnimatedSprite( Utils::concat( Constants::SPRITE_DIR, "class/MedicStrip.png" ), 400, 2, 3, true, 64, 64, 32, 32 );
-        sprite = new AnimatedSprite( dynamic_cast<AnimatedSprite*>( spr ) );
-    }
+    static AnimatedSprite *spr = new AnimatedSprite( Utils::concat( Constants::SPRITE_DIR, "class/MedicStrip.png" ), 400, 2, 3, true, 64, 64, 32, 32 );
+    return *spr;
 }

@@ -12,10 +12,12 @@ class Sprite
 {
     public:
         Sprite();
-        Sprite( const Sprite *sprite );
+        Sprite( const Sprite &sprite );
         Sprite( SDL_Surface *image, int spriteWidth = 0, int spriteHeight = 0, double spriteCentreX = 0, double spriteCentreY = 0 );
         Sprite( std::string filename, int spriteWidth = 0, int spriteHeight = 0, double spriteCentreX = 0, double spriteCentreY = 0 );
         virtual ~Sprite();
+
+        Sprite &operator=( const Sprite &other );
 
         int get_count() const;
 
