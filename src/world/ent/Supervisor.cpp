@@ -1,4 +1,4 @@
-#include <SDL.h>
+#include <SDL2/SDL.h>
 
 #include "world/ent/Supervisor.h"
 #include "world/ent/Entity.h"
@@ -87,20 +87,20 @@ void Supervisor::reset()
     entities.clear();
 }
 
-void Supervisor::render( SDL_Surface *screen )
+void Supervisor::render( SDL_Window *window )
 {
     for ( int i = 0; i < entities.size(); i++ )
     {
         //printf( "uID %i: WILL BE drawing the sprite at (%f, %f).\n", entity.first, entity.second->position->x, entity.second->position->y );
-        entities[i].render( screen );
+        entities[i].render( window );
     }
 }
 
-void Supervisor::update( SDL_Surface *screen, double delta )
+void Supervisor::update( SDL_Window *window, double delta )
 {
     for ( int i = 0; i < entities.size(); i++ )
     {
-        entities[i].update( screen, delta );
+        entities[i].update( window, delta );
     }
 }
 

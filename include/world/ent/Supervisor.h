@@ -3,7 +3,7 @@
 
 #include <boost/ptr_container/ptr_vector.hpp>
 
-#include <SDL.h>
+#include <SDL2/SDL.h>
 
 #include "world/ent/Entity.h"
 #include "world/ent/EntityEnums.h"
@@ -30,8 +30,8 @@ class Supervisor
         boost::ptr_vector<Entity> *entity_list();
         int entity_count();
         void reset();
-        void render( SDL_Surface *screen );
-        void update( SDL_Surface *screen, double delta );
+        void render( SDL_Window *window );
+        void update( SDL_Window *window, double delta );
     protected:
     private:
         boost::ptr_vector<Entity>::iterator get_entity_index( Entity *entity );

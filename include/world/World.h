@@ -1,7 +1,7 @@
 #ifndef WORLD_H
 #define WORLD_H
 
-#include <SDL.h>
+#include <SDL2/SDL.h>
 
 #include "world/ent/Supervisor.h"
 
@@ -15,8 +15,8 @@ class World
 
         Supervisor *get_entity_supervisor();
 
-        virtual void render( SDL_Surface *screen );
-        virtual void update( SDL_Surface *screen, double delta );
+        virtual void render( SDL_Window *window );
+        virtual void update( SDL_Window *window, double delta );
 
         Supervisor *entities;
     protected:

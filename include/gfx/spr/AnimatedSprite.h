@@ -3,7 +3,7 @@
 
 #include <string>
 
-#include "SDL.h"
+#include <SDL2/SDL.h>
 #include "gfx/spr/Sprite.h"
 #include "util/Colour.h"
 
@@ -25,8 +25,8 @@ class AnimatedSprite : public Sprite
         void set_repeat( bool _repeat );
         void toggle_repeat();
 
-        virtual void update( SDL_Surface *screen, double delta );
-        virtual void render( SDL_Surface *screen, double x, double y, int index, double x_scale = 1, double y_scale = 1, Colour *colour = &Colour::WHITE, double theta = 0 );
+        virtual void update( SDL_Window *window, double delta );
+        virtual void render( SDL_Window *window, double x, double y, int index, double x_scale = 1, double y_scale = 1, Colour *colour = &Colour::WHITE, double theta = 0 );
 
         int start_index, end_index, anim_index;
         double rate, time_accumulated;

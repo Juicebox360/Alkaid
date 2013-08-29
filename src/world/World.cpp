@@ -1,4 +1,4 @@
-#include "SDL.h"
+#include <SDL2/SDL.h>
 
 #include "world/World.h"
 #include "world/ent/Supervisor.h"
@@ -17,12 +17,12 @@ Supervisor *World::get_entity_supervisor()
     return entities;
 }
 
-void World::render( SDL_Surface *screen )
+void World::render( SDL_Window *window )
 {
-    entities->render( screen );
+    entities->render( window );
 }
 
-void World::update( SDL_Surface *screen, double delta )
+void World::update( SDL_Window *window, double delta )
 {
-    entities->update( screen, delta );
+    entities->update( window, delta );
 }

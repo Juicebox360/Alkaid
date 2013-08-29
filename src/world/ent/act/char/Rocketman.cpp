@@ -1,4 +1,4 @@
-#include "SDL.h"
+#include <SDL2/SDL.h>
 
 #include "util/Utils.h"
 #include "util/Constants.h"
@@ -15,14 +15,14 @@ Rocketman::~Rocketman()
     //dtor
 }
 
-void Rocketman::render( SDL_Surface *screen )
+void Rocketman::render( SDL_Window *window )
 {
-    Actor::render( screen );
+    Actor::render( window );
 }
 
-void Rocketman::update( SDL_Surface *screen, double delta )
+void Rocketman::update( SDL_Window *window, double delta )
 {
-    Actor::update( screen, delta );
+    Actor::update( window, delta );
 }
 
 AnimatedSprite &Rocketman::spr()

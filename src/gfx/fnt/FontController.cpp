@@ -1,7 +1,7 @@
 #include <string>
 #include <vector>
 
-#include "SDL_ttf.h"
+#include <SDL2/SDL_ttf.h>
 
 #include "gfx/fnt/FontController.h"
 #include "util/Utils.h"

@@ -28,16 +28,16 @@ void Entity::init( World *_world, int _class_id, Sprite *_sprite, Vector2d *_pos
     class_id = _class_id;
 }
 
-void Entity::render( SDL_Surface *screen )
+void Entity::render( SDL_Window *window )
 {
     if ( sprite != NULL )
     {
         //printf( "uID %i: Drawing the sprite at (%f, %f).\n", unique_id, position->x, position->y );
-        sprite->render( screen, position->x, position->y, -1, 1.0d, 1.0d, &Colour::WHITE, 0.0d );
+        sprite->render( window, position->x, position->y, -1, 1.0d, 1.0d, &Colour::WHITE, 0.0d );
     }
 }
 
-void Entity::update( SDL_Surface *screen, double delta )
+void Entity::update( SDL_Window *window, double delta )
 {
     // Modulate position by velocity
     if ( velocity != NULL && position != NULL )
@@ -48,6 +48,6 @@ void Entity::update( SDL_Surface *screen, double delta )
     // Update the sprite, if we've got one.
     if ( sprite != NULL )
     {
-        sprite->update( screen, delta );
+        sprite->update( window, delta );
     }
 }

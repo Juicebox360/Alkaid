@@ -7,11 +7,11 @@
 #include <vector>
 #include <string>
 
-#include "SDL.h"
-#include "SDL_image.h"
-#include "SDL_ttf.h"
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
+#include <SDL2/SDL_ttf.h>
 //#include "SDL_mixer.h"
-#include "SDL_opengl.h"
+#include <SDL2/SDL_opengl.h>
 
 #include "world/ent/Supervisor.h"
 #include "world/ent/EntityEnums.h"
@@ -22,7 +22,7 @@
 
 const int WINDOW_WIDTH = 800;
 const int WINDOW_HEIGHT = 600;
-const char *WINDOW_TITLE = "Alkaid Engine Demonstration";
+const char *WINDOW_TITLE = "Benetnasch";
 
 SDL_Event event;
 
@@ -34,13 +34,21 @@ bool gameRunning = true;
 World world;
 FontController fonts;
 
-SDL_Surface *screen;
+SDL_Surface *surface;
+SDL_Window *primaryWindow;
+SDL_GLContext buff;
+
+//SDL_Renderer *renderer;
+//SDL_Texture *screen;
 
 Font *font;
 Colour bColour( 64, 64, 64, 200 ), fColour( 255, 255, 255, 200 );
 
 void processKey( SDL_KeyboardEvent key )
 {
+    int w, h;
+    SDL_GetWindowSize( primaryWindow, &w, &h );
+
     switch ( key.keysym.sym )
     {
         case SDLK_1:
@@ -48,7 +56,7 @@ void processKey( SDL_KeyboardEvent key )
             {
                 printf( "Making a Runner\n" );
 
-                world.get_entity_supervisor()->entity_create( ENTITY_RUNNER, &world, new Vector2d( Utils::random_int( 0, SDL_GetVideoInfo()->current_w ), Utils::random_int( 0, SDL_GetVideoInfo()->current_h ) ) );
+                world.get_entity_supervisor()->entity_create( ENTITY_RUNNER, &world, new Vector2d( Utils::random_int( 0, w ), Utils::random_int( 0, h ) ) );
             }
             break;
         case SDLK_2:
@@ -56,7 +64,7 @@ void processKey( SDL_KeyboardEvent key )
             {
                 printf( "Making a Rocketman\n" );
 
-                world.get_entity_supervisor()->entity_create( ENTITY_ROCKETMAN, &world, new Vector2d( Utils::random_int( 0, SDL_GetVideoInfo()->current_w ), Utils::random_int( 0, SDL_GetVideoInfo()->current_h ) ) );
+                world.get_entity_supervisor()->entity_create( ENTITY_ROCKETMAN, &world, new Vector2d( Utils::random_int( 0, w), Utils::random_int( 0, h ) ) );
             }
             break;
         case SDLK_3:
@@ -64,7 +72,7 @@ void processKey( SDL_KeyboardEvent key )
             {
                 printf( "Making a Healer\n" );
 
-                world.get_entity_supervisor()->entity_create( ENTITY_HEALER, &world, new Vector2d( Utils::random_int( 0, SDL_GetVideoInfo()->current_w ), Utils::random_int( 0, SDL_GetVideoInfo()->current_h ) ) );
+                world.get_entity_supervisor()->entity_create( ENTITY_HEALER, &world, new Vector2d( Utils::random_int( 0, w ), Utils::random_int( 0, h ) ) );
             }
             break;
         case SDLK_0:
@@ -136,11 +144,64 @@ void pre_init()
     freopen( "CON", "w", stderr );
 
     printf( "Init: SDL...\n" );
-    if ( SDL_Init( SDL_INIT_VIDEO | SDL_INIT_AUDIO ) != 0 )
+    if ( SDL_Init( SDL_INIT_EVERYTHING ) != 0 )
     {
         printf( "Unable to initialise SDL: %s\n", SDL_GetError() );
         exit( EXIT_FAILURE );
     }
+    printf( "Creating window...\n" );
+    primaryWindow = SDL_CreateWindow( WINDOW_TITLE, 100, 100, WINDOW_WIDTH, WINDOW_HEIGHT, SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL );
+    if ( primaryWindow == nullptr )
+    {
+        printf( "Unable to create window: %s\n", SDL_GetError() );
+        exit( EXIT_FAILURE );
+    }
+    printf( "Creating drawing buffer...\n" );
+    buff = SDL_GL_CreateContext( primaryWindow );
+    if ( buff == nullptr )
+    {
+        printf( "Unable to create drawing buffer: %s\n", SDL_GetError() );
+        exit( EXIT_FAILURE );
+    }
+
+/*
+    printf( "Creating renderer...\n" );
+    renderer = SDL_CreateRenderer( primaryWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC );
+    if ( renderer == nullptr )
+    {
+        printf( "Unable to create renderer: %s\n", SDL_GetError() );
+        exit( EXIT_FAILURE );
+    }
+    printf( "Creating drawing surface...\n" );
+    screen = SDL_CreateTexture( renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STATIC, WINDOW_WIDTH, WINDOW_HEIGHT );
+    if ( screen == nullptr )
+    {
+        printf( "Unable to create drawing surface: %s\n", SDL_GetError() );
+        exit( EXIT_FAILURE );
+    }
+
+    Uint32 rMask, gMask, bMask, aMask;
+    #if SDL_BYTEORDER == SDL_BIG_ENDIAN
+        rMsk = 0xff000000;
+        gMask = 0x00ff0000;
+        bMask = 0x0000ff00;
+        aMask = 0x000000ff;
+    #else
+        rMask = 0x000000ff;
+        gMask = 0x0000ff00;
+        bMask = 0x00ff0000;
+        aMask = 0xff000000;
+    #endif
+
+    printf( "Creating drawing buffer...\n" );
+    buff = SDL_CreateRGBSurface( 0, WINDOW_WIDTH, WINDOW_HEIGHT, 32, rMask, gMask, bMask, aMask );
+    if ( buff == nullptr )
+    {
+        printf( "Unable to create drawing buffer: %s\n", SDL_GetError() );
+        exit( EXIT_FAILURE );
+    }
+    */
+
     printf( "Init: SDL_TTF...\n" );
     if ( TTF_Init() != 0 )
     {
@@ -155,16 +216,17 @@ void pre_init()
     Utils::pre_init();
 
     printf( "Setting Double-buffer.\n" );
-    SDL_GL_SetAttribute( SDL_GL_DOUBLEBUFFER, true );
+    //SDL_GL_SetAttribute( SDL_GL_DOUBLEBUFFER, true );
+    SDL_GL_SetSwapInterval( 1 );
 
-    printf( "Setting video mode.\n" );
-    screen = SDL_SetVideoMode( WINDOW_WIDTH, WINDOW_HEIGHT, 0, SDL_OPENGL | SDL_HWSURFACE | SDL_GL_DOUBLEBUFFER );
+    //printf( "Setting video mode.\n" );
+    //screen = SDL_SetVideoMode( WINDOW_WIDTH, WINDOW_HEIGHT, 0, SDL_OPENGL | SDL_HWSURFACE | SDL_GL_DOUBLEBUFFER );
 
     // GL bullshit
     printf( "Initialising OpenGL.\n" );
     init_gl();
 
-    SDL_WM_SetCaption( WINDOW_TITLE, 0 );
+    //SDL_WM_SetCaption( WINDOW_TITLE, 0 );
 
     printf( "Initialisation completed!\n" );
 }
@@ -173,24 +235,51 @@ void cleanUp()
 {
     //Mix_CloseAudio();
 
+    //SDL_DestroyRenderer( renderer );
+    SDL_DestroyWindow( primaryWindow );
+    //SDL_DestroyTexture( screen );
+    //SDL_FreeSurface( surface );
+
     fonts.clean_up();
     TTF_Quit();
 
     SDL_Quit();
 }
 
-void render( SDL_Surface *screen )
+void render( SDL_Window *window )
 {
     glClear( GL_COLOR_BUFFER_BIT );
 
-    world.render( screen );
+    //SDL_SetRenderDrawColor( renderer, 0, 0, 0, 255 );
+    //SDL_RenderClear( renderer );
+    //SDL_RenderPresent( renderer );
+
+    world.render( window );
 
     // Text
     font->draw_text_shaded( "Press 1 to make a Runner, 2 to make a Rocketman, and 3 to make a Healer.", 5.0d, 5.0d, 1.8d, fColour, bColour );
     font->draw_text_shaded( "Press 0 to destroy all entities.", 5.0d, 500.0d, 1.8d, fColour, bColour );
 
     // Refresh
-    SDL_GL_SwapBuffers();
+    //SDL_GL_SwapBuffers();
+    SDL_GL_SwapWindow( window );
+
+/*
+    SDL_SetRenderDrawColor( renderer, 0, 0, 0, 255 );
+    SDL_RenderClear( renderer );
+    glClear( GL_COLOR_BUFFER_BIT );
+
+    world.render( buffer );
+
+    font->draw_text_shaded( "Press 1 to make a Runner, 2 to make a Rocketman, and 3 to make a Healer.", 5.0d, 5.0d, 1.8d, fColour, bColour );
+    font->draw_text_shaded( "Press 0 to destroy all entities.", 5.0d, 500.0d, 1.8d, fColour, bColour );
+
+    screen = SDL_CreateTextureFromSurface( renderer, buffer );
+    SDL_RenderCopy( renderer, screen, NULL, NULL );
+    SDL_RenderPresent( renderer );
+
+    SDL_GL_SwapWindow( window );
+*/
 }
 
 int main( int argc, char **argv )
@@ -218,10 +307,10 @@ int main( int argc, char **argv )
         // Update. Physics. Inputs. AI.
         processInput();
 
-        world.update( screen, time_delta_ms );
+        world.update( primaryWindow, time_delta_ms );
 
         // Render everything if the updating for this tick is done
-        render( screen );
+        render( primaryWindow );
     }
     printf( "Exiting game loop.\n" );
 

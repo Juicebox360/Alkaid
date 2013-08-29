@@ -1,7 +1,9 @@
 #include <string>
 
-#include "SDL.h"
-#include "SDL_ttf.h"
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_ttf.h>
+
+#include <stdio.h>
 
 #include "util/Colour.h"
 #include "gfx/fnt/Font.h"

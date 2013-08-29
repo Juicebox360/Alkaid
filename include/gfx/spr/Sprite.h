@@ -3,8 +3,8 @@
 
 #include <string>
 
-#include "SDL.h"
-#include "SDL_opengl.h"
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_opengl.h>
 #include "util/Colour.h"
 #include "util/Vector2d.h"
 
@@ -26,9 +26,9 @@ class Sprite
         void set_visible( bool visiblity );
         void toggle_visible();
 
-        virtual void render( SDL_Surface *screen, double x, double y, int index = 0, double x_scale = 1.0d, double y_scale = 1.0d, Colour *colour = &Colour::WHITE, double theta = 0.0d );
-        virtual void render( SDL_Surface *screen, double x, double y, int x_index = 0, int y_index = 0, double x_scale = 1.0d, double y_scale = 1.0d, Colour *colour = &Colour::WHITE, double theta = 0.0d );
-        virtual void update( SDL_Surface *screen, double delta );
+        virtual void render( SDL_Window *window, double x, double y, int index = 0, double x_scale = 1.0d, double y_scale = 1.0d, Colour *colour = &Colour::WHITE, double theta = 0.0d );
+        virtual void render( SDL_Window *window, double x, double y, int x_index = 0, int y_index = 0, double x_scale = 1.0d, double y_scale = 1.0d, Colour *colour = &Colour::WHITE, double theta = 0.0d );
+        virtual void update( SDL_Window *window, double delta );
 
         Vector2d *index_to_coord( int i );
         int coord_to_index( Vector2d &coord );

@@ -90,9 +90,9 @@ void AnimatedSprite::toggle_repeat()
     repeat = !repeat;
 }
 
-void AnimatedSprite::update( SDL_Surface *screen, double delta )
+void AnimatedSprite::update( SDL_Window *window, double delta )
 {
-    Sprite::update( screen, delta );
+    Sprite::update( window, delta );
 
     time_accumulated += delta;
     if ( time_accumulated >= rate )
@@ -114,9 +114,9 @@ void AnimatedSprite::update( SDL_Surface *screen, double delta )
     //printf( "t: %f; dt: %f\n", time_accumulated, delta );
 }
 
-void AnimatedSprite::render( SDL_Surface *screen, double x, double y, int index, double x_scale, double y_scale, Colour *colour, double theta )
+void AnimatedSprite::render( SDL_Window *window, double x, double y, int index, double x_scale, double y_scale, Colour *colour, double theta )
 {
-    Sprite::render( screen, x, y, (index < 0 ? anim_index : index), x_scale, y_scale, colour, theta );
+    Sprite::render( window, x, y, (index < 0 ? anim_index : index), x_scale, y_scale, colour, theta );
 }
 
 void AnimatedSprite::set_index_value( int &value_loc, int value )

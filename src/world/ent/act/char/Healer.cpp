@@ -1,4 +1,4 @@
-#include "SDL.h"
+#include <SDL2/SDL.h>
 
 #include "util/Utils.h"
 #include "util/Constants.h"
@@ -15,14 +15,14 @@ Healer::~Healer()
     //dtor
 }
 
-void Healer::render( SDL_Surface *screen )
+void Healer::render( SDL_Window *window )
 {
-    Actor::render( screen );
+    Actor::render( window );
 }
 
-void Healer::update( SDL_Surface *screen, double delta )
+void Healer::update( SDL_Window *window, double delta )
 {
-    Actor::update( screen, delta );
+    Actor::update( window, delta );
 }
 
 AnimatedSprite &Healer::spr()

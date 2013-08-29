@@ -2,7 +2,9 @@
  * Sprite.cpp: Defined functions for the Sprite class
  */
 
-#include "SDL_image.h"
+#include <SDL2/SDL_image.h>
+
+#include <stdio.h>
 
 #include "gfx/spr/Sprite.h"
 #include "util/Colour.h"
@@ -190,7 +192,7 @@ void Sprite::toggle_visible()
     visible = !visible;
 }
 
-void Sprite::render( SDL_Surface *screen, double x, double y, int index, double x_scale, double y_scale, Colour *colour, double theta )
+void Sprite::render( SDL_Window *window, double x, double y, int index, double x_scale, double y_scale, Colour *colour, double theta )
 {
     if ( !visible )
     {
@@ -199,10 +201,10 @@ void Sprite::render( SDL_Surface *screen, double x, double y, int index, double 
 
     Vector2d *coords = index_to_coord( index );
     //printf( "Coords: (%f, %f)\n", coords->getX(), coords->getY() );
-    render( screen, x, y, coords->x, coords->y, x_scale, y_scale, colour, theta );
+    render( window, x, y, coords->x, coords->y, x_scale, y_scale, colour, theta );
     delete coords;
 }
-void Sprite::render( SDL_Surface *screen, double x, double y, int x_index, int y_index, double x_scale, double y_scale, Colour *colour, double theta )
+void Sprite::render( SDL_Window *window, double x, double y, int x_index, int y_index, double x_scale, double y_scale, Colour *colour, double theta )
 {
     if ( !visible )
     {
@@ -250,7 +252,7 @@ void Sprite::render( SDL_Surface *screen, double x, double y, int x_index, int y
     glLoadIdentity();
 }
 
-void Sprite::update( SDL_Surface *screen, double delta )
+void Sprite::update( SDL_Window *window, double delta )
 {
 }
 

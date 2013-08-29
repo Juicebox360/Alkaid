@@ -1,4 +1,4 @@
-#include "SDL.h"
+#include <SDL2/SDL.h>
 
 #include "world/ent/act/Actor.h"
 
@@ -7,12 +7,12 @@ Actor::~Actor()
     //dtor
 }
 
-void Actor::render( SDL_Surface *screen )
+void Actor::render( SDL_Window *window )
 {
-    Entity::render( screen );
+    Entity::render( window );
 }
 
-void Actor::update( SDL_Surface *screen, double delta )
+void Actor::update( SDL_Window *window, double delta )
 {
-    Entity::update( screen, delta );
+    Entity::update( window, delta );
 }
